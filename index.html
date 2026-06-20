@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThinkNew Labs — Business Toolkit</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--p:#6366f1;--p2:#a855f7;--acc:#ff3b3b;--neon:#00ff88;--bg:#0a0a0b;--card:rgba(255,255,255,.05)}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:linear-gradient(135deg,#0a0a0b,#0d0a1a,#0a0a0b);font-family:'Inter',system-ui,sans-serif;color:#fff;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+canvas{position:fixed;inset:0;z-index:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 14px rgba(99,102,241,.3)}50%{box-shadow:0 0 28px rgba(99,102,241,.6)}}
+@keyframes pulseRed{0%,100%{text-shadow:0 0 20px #ff3b3b44}50%{text-shadow:0 0 35px #ff3b3baa}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dotPulse{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes timerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes sheen{0%{left:-100%}100%{left:200%}}
+@keyframes borderGlow{0%,100%{border-color:rgba(99,102,241,.2)}50%{border-color:rgba(99,102,241,.5)}}
+@keyframes waitPulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes progressBar{0%{width:10%}50%{width:60%}100%{width:85%}}
+@keyframes blockChain{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px 16px 60px}
+
+/* HERO */
+.hero{text-align:center;padding:44px 0 24px;animation:fadeUp .7s ease}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:7px 16px;border-radius:22px;font-size:10.5px;color:rgba(255,255,255,.45);font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:clamp(26px,5vw,44px);font-weight:900;line-height:1.15;background:linear-gradient(135deg,#fff,var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.hero p{color:rgba(255,255,255,.4);font-size:clamp(12.5px,2vw,15px);line-height:1.6;max-width:580px;margin:0 auto 18px}
+.hero-cta{display:inline-block;padding:13px 30px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-size:14.5px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .3s;text-decoration:none;animation:float 3s ease-in-out infinite}
+.hero-cta:hover{filter:brightness(1.15);transform:translateY(-3px);animation:glow 1.5s infinite}
+.live-bar{display:inline-flex;align-items:center;gap:7px;margin:14px 0 0;padding:7px 14px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:10px}
+.live-bar .dot{width:6px;height:6px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon)}
+.live-bar span{font-size:11px;color:rgba(255,255,255,.45)}
+.live-bar strong{color:var(--neon)}
+
+/* OFFER BANNER */
+.ob{background:linear-gradient(135deg,rgba(255,59,59,.05),rgba(168,85,247,.05));border:1.5px solid rgba(255,59,59,.12);border-radius:14px;padding:20px;text-align:center;margin:18px 0;position:relative;overflow:hidden;animation:fadeUp .6s ease}
+.ob::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);animation:sheen 4s ease-in-out infinite;pointer-events:none}
+.ob-badge{display:inline-block;background:var(--acc);color:#fff;font-size:9.5px;font-weight:800;padding:4px 11px;border-radius:10px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.ob-title{font-size:17px;font-weight:900;margin-bottom:3px}
+.ob-sub{font-size:12px;color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:10px}
+.ob-prices{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
+.ob-old{font-size:20px;color:rgba(255,255,255,.2);text-decoration:line-through;font-weight:700;position:relative}
+.ob-old::after{content:'';position:absolute;left:-3px;right:-3px;top:50%;height:2px;background:var(--acc);transform:rotate(-8deg)}
+.ob-new{font-size:34px;font-weight:900;color:var(--neon)}
+.ob-save{display:inline-block;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.12);padding:3px 10px;border-radius:5px;font-size:10.5px;color:var(--neon);font-weight:700;margin-bottom:10px}
+.ob-btn{display:inline-block;padding:11px 26px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--acc),#dc2626);color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .3s}
+.ob-btn:hover{filter:brightness(1.12);transform:translateY(-2px)}
+
+/* TOOL GRID */
+.grid-t{text-align:center;font-size:11px;font-weight:700;color:var(--p2);letter-spacing:1px;text-transform:uppercase;margin:22px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:24px}
+.tc{background:var(--card);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06);border-radius:13px;padding:18px 16px;transition:all .3s;cursor:default;position:relative;overflow:hidden;animation:fadeUp .5s ease}
+.tc::after{content:'';position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent)}
+.tc:hover{transform:translateY(-2px);border-color:rgba(99,102,241,.2);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.tc-ic{font-size:26px;margin-bottom:8px}
+.tc-nm{font-size:14px;font-weight:800;margin-bottom:3px}
+.tc-ds{font-size:11px;color:rgba(255,255,255,.38);line-height:1.5;margin-bottom:10px}
+.tc-st{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;margin-bottom:8px}
+.tc-st.free{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.1);color:var(--neon)}
+.tc-st.locked{background:rgba(255,59,59,.05);border:1px solid rgba(255,59,59,.1);color:var(--acc)}
+.tc-st.pro{background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.12);color:var(--p2)}
+.tc-btn{width:100%;padding:9px;border:none;border-radius:7px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .3s}
+.tc-btn:hover{filter:brightness(1.1)}
+.tc-btn.unlocked{background:linear-gradient(135deg,var(--neon),#10b981);color:#000}
+
+/* OVERLAYS */
+#toolOv{position:fixed;inset:0;z-index:9998;background:rgba(5,3,12,.93);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:14px}
+#toolOv.open{display:block}
+.tm{max-width:500px;margin:16px auto;background:rgba(12,8,28,.92);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:22px 18px;position:relative;animation:slideUp .4s ease}
+.tm-x{position:absolute;top:8px;right:12px;background:none;border:none;color:rgba(255,255,255,.25);font-size:18px;cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .2s;z-index:5}
+.tm-x:hover{color:#fff;background:rgba(255,255,255,.06)}
+
+/* TIMER */
+.tmr{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;padding:4px 12px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.07);border-radius:18px;z-index:5}
+.tmr.warn{border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.05)}
+.tmr.danger{border-color:rgba(255,59,59,.25);background:rgba(255,59,59,.05);animation:timerPulse 1s ease infinite}
+.tmr-t{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;min-width:36px;text-align:center}
+.tmr-t.g{color:var(--neon)}.tmr-t.y{color:#fbbf24}.tmr-t.r{color:var(--acc)}
+.tmr-l{font-size:8.5px;color:rgba(255,255,255,.3);font-weight:600;text-transform:uppercase}
+
+.tm-tt{font-size:17px;font-weight:800;margin:28px 0 3px;text-align:center}
+.tm-sub{font-size:11px;color:rgba(255,255,255,.32);text-align:center;margin-bottom:16px}
+
+/* FORM */
+label{display:block;color:rgba(255,255,255,.42);font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:3px}
+.inp{width:100%;padding:10px 12px;border:1.5px solid rgba(255,255,255,.06);border-radius:8px;background:rgba(255,255,255,.03);color:#fff;font-size:12.5px;font-family:inherit;outline:none;transition:all .3s;margin-bottom:11px;-webkit-appearance:none}
+.inp:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(99,102,241,.15);background:rgba(255,255,255,.05)}
+.inp::placeholder{color:rgba(255,255,255,.16)}
+select.inp{cursor:pointer}select.inp option{background:#1a1040;color:#fff}
+textarea.inp{resize:vertical;min-height:55px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.err{color:var(--acc);font-size:10px;margin:-5px 0 7px 2px;display:none}.err.on{display:block}
+
+.btn{width:100%;padding:12px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .3s}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn-g{background:linear-gradient(135deg,var(--neon),#10b981);color:#000}
+.btn-r{background:linear-gradient(135deg,var(--acc),#dc2626)}
+.btn.ld{pointer-events:none;opacity:.7}
+.btn.ld::after{content:'';width:13px;height:13px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .5s linear infinite;display:inline-block;margin-left:7px;vertical-align:middle}
+
+/* OUTPUT */
+.oc{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:9px;padding:12px 14px;margin-bottom:7px;animation:fadeUp .3s ease}
+.oc-l{font-size:9px;font-weight:700;color:var(--p2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+.oc-v{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5}
+.oc-v strong{color:#fff}
+.out-big{font-size:40px;font-weight:900;color:var(--acc);animation:pulseRed 2s ease-in-out infinite;text-align:center;padding:10px 0}
+.out-big.green{color:var(--neon);animation:none}
+
+/* INVOICE */
+.inv{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;margin-bottom:10px}
+.inv-h{display:flex;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.inv-biz{font-size:16px;font-weight:900}
+.inv-id{font-size:10px;color:rgba(255,255,255,.25);text-align:right}
+.inv-id strong{color:var(--p2);font-size:12px;display:block}
+.inv-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px}
+.inv-row:last-child{border:none}
+.inv-l{color:rgba(255,255,255,.45)}.inv-r{color:#fff;font-weight:700}
+.inv-total{display:flex;justify-content:space-between;padding:10px 0 0;border-top:2px solid var(--p);margin-top:6px;font-size:15px;font-weight:900}
+.inv-total .inv-r{color:var(--neon)}
+
+/* TIERS */
+.tier{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:9px;padding:12px;margin-bottom:7px;text-align:center}
+.tier.feat{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.04)}
+.tier-nm{font-size:11px;font-weight:700;color:var(--p2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.tier-pr{font-size:26px;font-weight:900;color:#fff;margin-bottom:3px}
+.tier-ds{font-size:10.5px;color:rgba(255,255,255,.38);line-height:1.4}
+
+/* SCORE */
+.score{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;font-weight:900}
+.score.red{background:rgba(255,59,59,.08);border:3px solid var(--acc);color:var(--acc)}
+.score.yellow{background:rgba(251,191,36,.06);border:3px solid #fbbf24;color:#fbbf24}
+.score.green{background:rgba(0,255,136,.05);border:3px solid var(--neon);color:var(--neon)}
+
+/* PAYMENT */
+#payOv{position:fixed;inset:0;z-index:99998;background:rgba(3,1,10,.9);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto}
+#payOv.open{display:flex}
+.pm{max-width:420px;width:100%;background:rgba(12,8,28,.95);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:22px 18px;animation:slideUp .4s ease;position:relative;overflow:hidden}
+.pm-x{position:absolute;top:8px;right:12px;background:none;border:none;color:rgba(255,255,255,.22);font-size:18px;cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .2s;z-index:3}
+.pm-x:hover{color:#fff;background:rgba(255,255,255,.05)}
+
+/* BLOCKCHAIN ANIM */
+.bv{text-align:center;padding:20px 8px;animation:fadeUp .4s ease}
+.bv-blocks{display:flex;align-items:center;justify-content:center;gap:3px;margin:14px 0}
+.bv-b{width:22px;height:22px;border-radius:4px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);animation:pop .3s ease backwards}
+.bv-b:nth-child(1){animation-delay:0s}.bv-b:nth-child(2){animation-delay:.12s}.bv-b:nth-child(3){animation-delay:.24s}.bv-b:nth-child(4){animation-delay:.36s}.bv-b:nth-child(5){animation-delay:.48s}
+.bv-ln{width:10px;height:2px;background:rgba(99,102,241,.25)}
+.bv-scan{width:100%;height:2px;background:rgba(99,102,241,.1);margin:10px 0;position:relative;overflow:hidden}
+.bv-scan div{position:absolute;width:40%;height:100%;background:linear-gradient(90deg,transparent,var(--p2),transparent);animation:blockChain 1.5s ease-in-out infinite}
+.bv-t{font-size:14px;font-weight:800;margin-bottom:3px}
+.bv-s{font-size:11px;color:rgba(255,255,255,.32);line-height:1.5}
+.bv-st{display:inline-flex;align-items:center;gap:5px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);padding:4px 11px;border-radius:6px;font-size:10px;font-weight:700;color:#fbbf24;margin-top:8px}
+.bv-dot{width:5px;height:5px;border-radius:50%;background:#fbbf24;animation:waitPulse 1.5s ease infinite}
+
+/* TRUST WALLET */
+.tw{margin:10px 0;padding:11px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.05);border-radius:9px;position:relative}
+.tw-l{font-size:9px;color:rgba(255,255,255,.28);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.tw-a{font-size:9px;color:var(--neon);word-break:break-all;font-weight:600;background:rgba(0,255,136,.03);padding:6px 8px;border-radius:5px;border:1px solid rgba(0,255,136,.08);-webkit-user-select:text;user-select:text;line-height:1.4}
+.tw-n{font-size:9px;color:rgba(255,255,255,.2);margin-top:3px}
+.tw-cp{position:absolute;top:9px;right:9px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.12);color:var(--neon);font-size:9px;padding:3px 7px;border-radius:4px;cursor:pointer;font-family:inherit;font-weight:700;transition:all .2s}
+.tw-cp:hover{background:var(--neon);color:#000}
+.tw-cp.ok{background:var(--neon);color:#000}
+
+/* PAY CONFIRM */
+.pc-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.pc-opt{padding:12px 8px;border:2px solid rgba(255,255,255,.06);border-radius:9px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(255,255,255,.015)}
+.pc-opt:hover{border-color:rgba(255,255,255,.12)}
+.pc-opt.sy{border-color:var(--neon);background:rgba(0,255,136,.04);box-shadow:0 0 0 3px rgba(0,255,136,.07)}
+.pc-opt.sn{border-color:var(--acc);background:rgba(255,59,59,.04)}
+.pc-opt .poi{font-size:20px;margin-bottom:2px}
+.pc-opt .pot{font-size:11px;font-weight:700;color:#fff}
+.no-msg{background:rgba(255,59,59,.04);border:1px solid rgba(255,59,59,.1);border-radius:7px;padding:9px 11px;margin-top:7px;text-align:center;font-size:11px;color:rgba(255,255,255,.48);line-height:1.5}
+.no-msg strong{color:var(--acc)}
+
+/* OK */
+.ok{text-align:center;padding:12px 0;animation:fadeUp .4s ease}
+.ok-ic{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px;color:#fff;animation:pop .4s ease}
+
+/* OWNER TAB */
+#owTab{position:fixed;top:12px;right:12px;z-index:9999;width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-size:12px}
+#owTab:hover{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.2)}
+.ow-n{position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:var(--acc);font-size:7px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);animation:waitPulse 1.5s ease infinite}
+#owOv{position:fixed;inset:0;z-index:99999;background:rgba(2,0,14,.88);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto}
+#owOv.open{display:flex}
+.ow-m{background:rgba(10,6,28,.95);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:22px 18px;max-width:460px;width:100%;max-height:86vh;overflow-y:auto;position:relative;animation:fadeUp .4s ease}
+.ow-m::-webkit-scrollbar{width:3px}.ow-m::-webkit-scrollbar-thumb{background:rgba(255,255,255,.05);border-radius:3px}
+.ow-x{position:absolute;top:8px;right:12px;background:none;border:none;color:rgba(255,255,255,.22);font-size:18px;cursor:pointer;padding:3px 7px;border-radius:5px;transition:all .2s}
+.ow-x:hover{color:#fff;background:rgba(255,255,255,.05)}
+.ow-tt{font-size:16px;font-weight:800;margin-bottom:2px}
+.ow-sub{font-size:10.5px;color:rgba(255,255,255,.28);margin-bottom:14px}
+.login-wrap{text-align:center;padding:12px 0}
+.login-err{color:var(--acc);font-size:10.5px;margin-bottom:7px;display:none;font-weight:600}
+.login-err.on{display:block}
+.btn-login{width:100%;padding:11px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--p),#3b82f6);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .3s}
+.admin-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px}
+.as{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);border-radius:8px;padding:10px 8px;text-align:center}
+.as-n{font-size:18px;font-weight:900;color:var(--neon)}
+.as.pend .as-n{color:#fbbf24}.as.deny .as-n{color:var(--acc)}
+.as-l{font-size:8px;color:rgba(255,255,255,.25);font-weight:700;text-transform:uppercase;margin-top:1px}
+.adm-sec{font-size:10.5px;font-weight:700;color:var(--p2);letter-spacing:.7px;text-transform:uppercase;margin:12px 0 7px}
+.adm-empty{text-align:center;padding:14px;color:rgba(255,255,255,.15);font-size:11px}
+.pc{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:10px;padding:12px 14px;margin-bottom:7px;animation:fadeUp .3s ease}
+.pc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pc-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--p),#3b82f6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.pc-nm{font-size:12px;font-weight:700;color:#fff}
+.pc-em{font-size:10px;color:rgba(255,255,255,.28)}
+.pc-st{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;font-size:8.5px;font-weight:700;text-transform:uppercase;flex-shrink:0}
+.pc-st.w{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.12);color:#fbbf24}
+.pc-st.g{background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.1);color:var(--neon)}
+.pc-st.d{background:rgba(255,59,59,.05);border:1px solid rgba(255,59,59,.1);color:var(--acc)}
+.pc-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:7px}
+.pm-i{background:rgba(0,0,0,.12);border-radius:4px;padding:4px 6px}
+.pm-l{font-size:7.5px;color:rgba(255,255,255,.18);font-weight:700;text-transform:uppercase}
+.pm-v{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;margin-top:1px}
+.pc-time{font-size:9px;color:rgba(255,255,255,.15);margin-bottom:7px}
+.pc-acts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.bg{padding:8px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--neon),#10b981);color:#000;font-size:10.5px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s}
+.bg:hover{filter:brightness(1.1)}
+.bd{padding:8px;border:1.5px solid rgba(255,59,59,.2);border-radius:6px;background:rgba(255,59,59,.03);color:var(--acc);font-size:10.5px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .2s}
+.bd:hover{background:rgba(255,59,59,.1)}
+.btn-done{padding:8px;border:none;border-radius:6px;font-size:10.5px;font-weight:700;grid-column:1/-1;text-align:center;font-family:inherit}
+.btn-done.gg{background:rgba(0,255,136,.05);color:var(--neon);border:1px solid rgba(0,255,136,.1)}
+.btn-done.dd{background:rgba(255,59,59,.04);color:var(--acc);border:1px solid rgba(255,59,59,.08)}
+.btn-bk{background:none;border:none;color:rgba(255,255,255,.22);font-size:11px;cursor:pointer;font-family:inherit;padding:6px 0;transition:color .2s;margin-top:8px;width:100%;text-align:center}
+.btn-bk:hover{color:#fff}
+.ft{text-align:center;padding:16px 0;font-size:10px;color:rgba(255,255,255,.1)}
+
+@media(max-width:400px){
+.wrap{padding:12px 10px 40px}.hero h1{font-size:22px}
+.grid{grid-template-columns:1fr}.r2,.r3,.pc-opts,.pc-acts,.pc-meta,.admin-stats{grid-template-columns:1fr}
+.out-big{font-size:32px}.ob-new{font-size:28px}
+}
+</style>
+</head>
+<body>
+<canvas id="sC"></canvas>
+<div id="owTab">⚙️<span class="ow-n" id="owN" style="display:none">!</span></div>
+<div id="owOv"><div class="ow-m"><button class="ow-x" id="owX">✕</button><div id="owC"></div></div></div>
+<div class="wrap">
+<section class="hero">
+<div class="hero-badge">🚀 ThinkNew Labs</div>
+<h1>The Business Toolkit.<br>10 Tools. Every Problem Solved.</h1>
+<p>Try any tool free for 80 seconds. Unlock lifetime access for $15 per tool — or grab all 10 for $100.</p>
+<a class="hero-cta" href="#tools">EXPLORE THE TOOLKIT</a>
+<div class="live-bar"><span class="dot"></span><span><strong id="liveC">3,241</strong> businesses using this right now</span></div>
+</section>
+<div class="ob"><div class="ob-badge">🔥 LIMITED</div><div class="ob-title">🎁 Special Bundle</div><div class="ob-sub">Each tool = $15 · All 10 = $150<br>Get everything for one price:</div><div class="ob-prices"><span class="ob-old">$150</span><span class="ob-new">$100</span></div><div class="ob-save">Save $50 — 33% OFF</div><br><button class="ob-btn" id="bundleBtn">🔓 Unlock All 10 — $100</button></div>
+<div class="grid-t" id="tools">⚡ THE TOOLKIT</div>
+<div class="grid" id="tGrid"></div>
+<div class="ft">© 2025 ThinkNew Labs</div>
+</div>
+<div id="toolOv"><div id="tC"></div></div>
+<div id="payOv"><div class="pm" id="pM"></div></div>
+
+<script>
+(function(){var c=document.getElementById('sC'),x=c.getContext('2d'),w,h,s=[];function r(){w=c.width=innerWidth;h=c.height=innerHeight*2;s=[];for(var i=0;i<130;i++)s.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.1+.3,o:Math.random()*.55+.3})}r();addEventListener('resize',r);var o=0;(function d(){x.clearRect(0,0,w,h);s.forEach(function(p){x.beginPath();x.arc(p.x,(p.y+o)%h,p.r,0,Math.PI*2);x.fillStyle='rgba(255,255,255,'+p.o+')';x.fill()});o+=.08;requestAnimationFrame(d)})()})();
+
+document.addEventListener('copy',function(e){if(!hasAll()){e.preventDefault();e.clipboardData.setData('text/plain','⚠️ Unlock tool to copy.')}});
+document.addEventListener('contextmenu',function(e){if(!hasAll())e.preventDefault()});
+
+var lc=3241;setInterval(function(){lc+=Math.floor(Math.random()*3);var e=document.getElementById('liveC');if(e)e.textContent=lc.toLocaleString()},7000);
+
+var W3K='55a5b9fa-5e1f-4c40-a364-3e364d011c2f',W3U='https://api.web3forms.com/submit',WALLET='0x263BC40ca9715a4e13470772B59CD0Acc7E4410B',OWNER_PW='vashuk@thinknewlabs.owner',TRIAL=80;
+
+var TOOLS=[
+{id:'revenue-leak',ic:'⚡',nm:'Revenue Leak Detector',ds:'Find how much money your business loses monthly.',pr:15},
+{id:'invoice',ic:'📄',nm:'Invoice Generator',ds:'Professional invoices in seconds.',pr:15},
+{id:'captions',ic:'📱',nm:'Caption Generator',ds:'Scroll-stopping captions with hashtags.',pr:15},
+{id:'email-subj',ic:'📧',nm:'Email Subject Lines',ds:'10 high-converting subject lines.',pr:15},
+{id:'sales-script',ic:'💬',nm:'Sales Script Generator',ds:'Word-for-word scripts that close.',pr:15},
+{id:'lead-widget',ic:'🔒',nm:'Lead Capture Widget',ds:'Embeddable lead forms with preview.',pr:15},
+{id:'pricing',ic:'💰',nm:'Pricing Architect',ds:'3-tier pricing with anchoring.',pr:15},
+{id:'roi',ic:'📊',nm:'ROI Calculator',ds:'Exact return on any campaign.',pr:15},
+{id:'retention',ic:'🎯',nm:'Retention Score',ds:'Score + actionable improvement tips.',pr:15},
+{id:'competitor',ic:'🔍',nm:'Competitor Analyzer',ds:'5-point competitive analysis.',pr:15}
+];
+
+var pend=JSON.parse(localStorage.getItem('tnl_pend')||'{}');
+var acc=JSON.parse(localStorage.getItem('tnl_acc')||'{}');
+var denied=JSON.parse(localStorage.getItem('tnl_deny')||'{}');
+var timers=JSON.parse(localStorage.getItem('tnl_tmr')||'{}');
+var owAuth=localStorage.getItem('tnl_ow')==='true';
+var aTmr=null,curTool=null;
+
+function has(id){return acc[id]==='GRANTED'||acc['all-tools']==='GRANTED'}
+function hasAll(){return acc['all-tools']==='GRANTED'}
+function isPend(id){return!!pend[id]||!!pend['all-tools']}
+function tLeft(id){return timers[id]!==undefined?Math.max(0,timers[id]):TRIAL}
+function saveTmr(id,t){timers[id]=t;localStorage.setItem('tnl_tmr',JSON.stringify(timers))}
+function grant(id){acc[id]='GRANTED';localStorage.setItem('tnl_acc',JSON.stringify(acc))}
+function grantAll(){acc['all-tools']='GRANTED';TOOLS.forEach(function(t){acc[t.id]='GRANTED'});localStorage.setItem('tnl_acc',JSON.stringify(acc))}
+function setPend(id,d){pend[id]=d;localStorage.setItem('tnl_pend',JSON.stringify(pend));updBadge()}
+function grantUser(id){var u=pend[id];acc[id]=Object.assign({},u,{grantedAt:Date.now()});if(id==='all-tools')grantAll();else grant(id);localStorage.setItem('tnl_acc',JSON.stringify(acc));delete pend[id];localStorage.setItem('tnl_pend',JSON.stringify(pend));updBadge()}
+function denyUser(id){denied[id]=Object.assign({},pend[id],{deniedAt:Date.now()});localStorage.setItem('tnl_deny',JSON.stringify(denied));delete pend[id];localStorage.setItem('tnl_pend',JSON.stringify(pend));updBadge()}
+function updBadge(){var n=Object.keys(pend).length;var e=document.getElementById('owN');if(e){e.style.display=n>0?'flex':'none';e.textContent=n}}
+function timeAgo(ts){var d=Date.now()-ts,m=Math.floor(d/60000);if(m<1)return'Just now';if(m<60)return m+'m ago';var h=Math.floor(m/60);return h<24?h+'h ago':Math.floor(h/24)+'d ago'}
+function fmtT(s){var m=Math.floor(s/60),sc=s%60;return m+':'+(sc<10?'0':'')+sc}
+function w3f(d,ok,er){var fd=new FormData();fd.append('access_key',W3K);Object.keys(d).forEach(function(k){fd.append(k,d[k])});fetch(W3U,{method:'POST',body:fd,headers:{'Accept':'application/json'}}).then(function(r){return r.json()}).then(function(j){j.success?ok&&ok():er&&er()}).catch(function(){er&&er()})}
+updBadge();
+
+/* OWNER PANEL */
+document.getElementById('owTab').addEventListener('click',function(){document.getElementById('owOv').classList.add('open');owAuth?renderAdmin():renderLogin()});
+document.getElementById('owX').addEventListener('click',function(){document.getElementById('owOv').classList.remove('open')});
+document.getElementById('owOv').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')});
+
+function renderLogin(){
+document.getElementById('owC').innerHTML='<div class="login-wrap"><div style="font-size:34px;margin-bottom:8px">🔐</div><div class="ow-tt" style="text-align:center">Owner Access</div><div class="ow-sub" style="text-align:center">Enter admin password</div><label>Password</label><input class="inp" id="owPw" type="password" placeholder="Password..." style="-webkit-user-select:text;user-select:text"><div class="login-err" id="owErr">⚠️ Wrong password</div><button class="btn-login" id="owLog">🔓 Unlock</button></div>';
+var go=function(){if(document.getElementById('owPw').value===OWNER_PW){owAuth=true;localStorage.setItem('tnl_ow','true');renderAdmin()}else{document.getElementById('owErr').classList.add('on');document.getElementById('owPw').value=''}};
+document.getElementById('owLog').addEventListener('click',go);
+document.getElementById('owPw').addEventListener('keydown',function(e){if(e.key==='Enter')go()})}
+
+function renderAdmin(){
+var pk=Object.keys(pend),gk=Object.keys(acc).filter(function(k){return typeof acc[k]==='object'}),dk=Object.keys(denied);
+var h='<div class="ow-tt">👑 Owner Dashboard</div><div class="ow-sub">Check Trust Wallet → Grant or Deny</div>'+
+'<div class="admin-stats"><div class="as pend"><div class="as-n">'+pk.length+'</div><div class="as-l">Pending</div></div><div class="as"><div class="as-n">'+gk.length+'</div><div class="as-l">Granted</div></div><div class="as deny"><div class="as-n">'+dk.length+'</div><div class="as-l">Denied</div></div></div>';
+h+='<div class="adm-sec">🟡 Pending ('+pk.length+')</div>';
+if(!pk.length)h+='<div class="adm-empty">✨ No pending claims</div>';
+else pk.forEach(function(k){var u=pend[k];h+='<div class="pc" id="pc-'+k+'"><div class="pc-top"><div class="pc-av">'+((u.name||'?')[0]).toUpperCase()+'</div><div style="flex:1;min-width:0"><div class="pc-nm">'+(u.name||'—')+'</div><div class="pc-em">📧 '+(u.email||'—')+'</div></div><div class="pc-st w">⏳</div></div><div class="pc-meta"><div class="pm-i"><div class="pm-l">Tool</div><div class="pm-v">'+(u.tool||'—')+'</div></div><div class="pm-i"><div class="pm-l">Amount</div><div class="pm-v" style="color:var(--neon)">$'+(u.amount||'—')+'</div></div><div class="pm-i"><div class="pm-l">TX Hash</div><div class="pm-v" style="word-break:break-all">'+(u.hash?u.hash.substring(0,16)+'...':'—')+'</div></div><div class="pm-i"><div class="pm-l">Status</div><div class="pm-v" style="color:#fbbf24">Awaiting</div></div></div><div class="pc-time">🕐 '+timeAgo(u.ts)+'</div><div class="pc-acts" id="pa-'+k+'"><button class="bg" data-id="'+k+'">✅ Grant</button><button class="bd" data-id="'+k+'">❌ Deny</button></div></div>'});
+h+='<div class="adm-sec">✅ Granted ('+gk.length+')</div>';
+if(!gk.length)h+='<div class="adm-empty">None yet</div>';
+else gk.forEach(function(k){var u=acc[k];if(typeof u!=='object')return;h+='<div class="pc"><div class="pc-top"><div class="pc-av" style="background:linear-gradient(135deg,#22c55e,#16a34a)">'+((u.name||'?')[0]).toUpperCase()+'</div><div style="flex:1"><div class="pc-nm">'+(u.name||'—')+'</div><div class="pc-em">'+(u.tool||'—')+'</div></div><div class="pc-st g">✅</div></div></div>'});
+h+='<div class="adm-sec">❌ Denied ('+dk.length+')</div>';
+if(!dk.length)h+='<div class="adm-empty">None</div>';
+else dk.forEach(function(k){var u=denied[k];h+='<div class="pc"><div class="pc-top"><div class="pc-av" style="background:linear-gradient(135deg,#ef4444,#dc2626)">'+((u.name||'?')[0]).toUpperCase()+'</div><div style="flex:1"><div class="pc-nm">'+(u.name||'—')+'</div></div><div class="pc-st d">❌</div></div></div>'});
+h+='<button class="btn-bk" id="owOut">🔒 Logout</button>';
+document.getElementById('owC').innerHTML=h;
+document.querySelectorAll('.bg[data-id]').forEach(function(b){b.addEventListener('click',function(){var id=this.getAttribute('data-id');grantUser(id);document.getElementById('pa-'+id).innerHTML='<div class="btn-done gg">✅ Granted</div>';renderAdmin()})});
+document.querySelectorAll('.bd[data-id]').forEach(function(b){b.addEventListener('click',function(){var id=this.getAttribute('data-id');denyUser(id);document.getElementById('pa-'+id).innerHTML='<div class="btn-done dd">❌ Denied</div>';renderAdmin()})});
+document.getElementById('owOut').addEventListener('click',function(){owAuth=false;localStorage.removeItem('tnl_ow');document.getElementById('owOv').classList.remove('open')})}
+
+/* GRID */
+function renderGrid(){
+document.getElementById('tGrid').innerHTML=TOOLS.map(function(t){
+var h=has(t.id),p=isPend(t.id),tl=tLeft(t.id);
+var st,bt,bc;
+if(h){st='<span class="tc-st pro">👑 Lifetime</span>';bt='✅ Open';bc='tc-btn unlocked'}
+else if(p){st='<span class="tc-st locked">⏳ Pending</span>';bt='⏳ Pending';bc='tc-btn'}
+else if(tl<=0){st='<span class="tc-st locked">🔒 Expired</span>';bt='🔓 Unlock $'+t.pr;bc='tc-btn'}
+else{st='<span class="tc-st free">⏱️ '+tl+'s</span>';bt='▶️ Try ('+tl+'s)';bc='tc-btn'}
+return'<div class="tc"><div class="tc-ic">'+t.ic+'</div><div class="tc-nm">'+t.nm+'</div><div class="tc-ds">'+t.ds+'</div>'+st+'<button class="'+bc+'" data-t="'+t.id+'">'+bt+'</button></div>'
+}).join('');
+document.querySelectorAll('[data-t]').forEach(function(b){b.addEventListener('click',function(){openTool(this.getAttribute('data-t'))})});}
+
+function openTool(id){
+curTool=id;var t=TOOLS.find(function(x){return x.id===id});if(!t)return;
+if(isPend(id)&&!has(id)){showVerify(id);return}
+if(!has(id)&&tLeft(id)<=0){showPay(id);return}
+var ov=document.getElementById('toolOv');ov.classList.add('open');
+var h='<div class="tm"><button class="tm-x" id="tmX">✕</button>';
+if(!has(id))h+='<div class="tmr" id="tmrBar"><span class="tmr-l">Trial</span><span class="tmr-t g" id="tmrT">'+fmtT(tLeft(id))+'</span></div>';
+h+='<div class="tm-tt">'+t.ic+' '+t.nm+'</div><div class="tm-sub">'+t.ds+'</div><div id="tBody"></div></div>';
+document.getElementById('tC').innerHTML=h;
+document.getElementById('tmX').addEventListener('click',closeTool);
+renderToolUI(id);
+if(!has(id))startTmr(id);}
+
+function closeTool(){if(aTmr)clearInterval(aTmr);aTmr=null;document.getElementById('toolOv').classList.remove('open');renderGrid()}
+
+function startTmr(id){
+if(aTmr)clearInterval(aTmr);var left=tLeft(id);
+aTmr=setInterval(function(){left--;saveTmr(id,left);
+var e=document.getElementById('tmrT'),b=document.getElementById('tmrBar');
+if(e){e.textContent=fmtT(left);if(left>30){e.className='tmr-t g';if(b)b.className='tmr'}else if(left>10){e.className='tmr-t y';if(b)b.className='tmr warn'}else{e.className='tmr-t r';if(b)b.className='tmr danger'}}
+if(left<=0){clearInterval(aTmr);aTmr=null;closeTool();showPay(id)}},1000);}
+
+/* TOOL UIs */
+function renderToolUI(id){
+var b=document.getElementById('tBody');
+if(id==='revenue-leak')b.innerHTML='<div class="r2"><div><label>Monthly Visitors</label><input class="inp" id="i1" type="number" placeholder="5000"></div><div><label>Avg Customer Value ($)</label><input class="inp" id="i2" type="number" placeholder="150"></div></div><button class="btn" id="tGen">🔍 Detect Leak</button><div id="tOut"></div>';
+else if(id==='invoice')b.innerHTML='<div class="r2"><div><label>Business Name</label><input class="inp" id="i1" placeholder="ThinkNew Labs"></div><div><label>Client</label><input class="inp" id="i2" placeholder="Acme Corp"></div></div><label>Service</label><input class="inp" id="i3" placeholder="Web Development"><div class="r2"><div><label>Amount ($)</label><input class="inp" id="i4" type="number" placeholder="2500"></div><div><label>Due Date</label><input class="inp" id="i5" type="date"></div></div><button class="btn" id="tGen">📄 Generate</button><div id="tOut"></div>';
+else if(id==='captions')b.innerHTML='<label>Business Type</label><input class="inp" id="i1" placeholder="Fitness Studio"><label>Post Topic</label><input class="inp" id="i2" placeholder="Summer promo"><label>Tone</label><select class="inp" id="i3"><option value="">Select...</option><option>Professional</option><option>Funny</option><option>Urgent</option></select><button class="btn" id="tGen">📱 Generate 5</button><div id="tOut"></div>';
+else if(id==='email-subj')b.innerHTML='<label>Purpose</label><input class="inp" id="i1" placeholder="Product launch"><label>Audience</label><input class="inp" id="i2" placeholder="Business owners"><label>Tone</label><select class="inp" id="i3"><option value="">Select...</option><option>Curiosity</option><option>Fear</option><option>Urgency</option><option>Benefit</option></select><button class="btn" id="tGen">📧 Generate 10</button><div id="tOut"></div>';
+else if(id==='sales-script')b.innerHTML='<label>Product/Service</label><input class="inp" id="i1" placeholder="Marketing Software"><label>Target Customer</label><input class="inp" id="i2" placeholder="Small business owners"><label>Main Objection</label><input class="inp" id="i3" placeholder="Too expensive"><button class="btn" id="tGen">💬 Generate Script</button><div id="tOut"></div>';
+else if(id==='lead-widget')b.innerHTML='<label>Business Name</label><input class="inp" id="i1" placeholder="My Business"><label>Offer Text</label><input class="inp" id="i2" placeholder="Get 20% off!"><label>Color</label><input class="inp" id="i3" type="color" value="#6366f1" style="height:40px;padding:3px"><button class="btn" id="tGen">🔒 Generate Widget</button><div id="tOut"></div>';
+else if(id==='pricing')b.innerHTML='<label>Service</label><input class="inp" id="i1" placeholder="Social Media Management"><div class="r3"><div><label>Cost ($)</label><input class="inp" id="i2" type="number" placeholder="200"></div><div><label>Margin %</label><input class="inp" id="i3" type="number" placeholder="60"></div><div><label>Competitor ($)</label><input class="inp" id="i4" type="number" placeholder="500"></div></div><button class="btn" id="tGen">💰 Generate</button><div id="tOut"></div>';
+else if(id==='roi')b.innerHTML='<div class="r3"><div><label>Ad Spend ($)</label><input class="inp" id="i1" type="number" placeholder="1000"></div><div><label>Revenue ($)</label><input class="inp" id="i2" type="number" placeholder="5000"></div><div><label>Days</label><input class="inp" id="i3" type="number" placeholder="30"></div></div><button class="btn" id="tGen">📊 Calculate</button><div id="tOut"></div>';
+else if(id==='retention')b.innerHTML='<div class="r3"><div><label>Total Clients</label><input class="inp" id="i1" type="number" placeholder="200"></div><div><label>Lost/Month</label><input class="inp" id="i2" type="number" placeholder="12"></div><div><label>Avg Life (mo)</label><input class="inp" id="i3" type="number" placeholder="8"></div></div><button class="btn" id="tGen">🎯 Score</button><div id="tOut"></div>';
+else if(id==='competitor')b.innerHTML='<label>Your Business Type</label><input class="inp" id="i1" placeholder="Marketing Agency"><label>City</label><input class="inp" id="i2" placeholder="Houston"><label>Competitor</label><input class="inp" id="i3" placeholder="BigAgency Co"><button class="btn" id="tGen">🔍 Analyze</button><div id="tOut"></div>';
+document.getElementById('tGen').addEventListener('click',function(){genOut(id)});}
+
+function genOut(id){
+var o=document.getElementById('tOut');
+if(id==='revenue-leak'){var v=parseInt(document.getElementById('i1').value)||0,c=parseInt(document.getElementById('i2').value)||0,lk=Math.round(v*.12*c);o.innerHTML='<div class="oc" style="text-align:center;margin-top:10px"><div class="oc-l">⚠️ Revenue Leak</div><div class="out-big">$'+lk.toLocaleString()+'/mo</div><div style="font-size:11px;color:rgba(255,255,255,.35)">$'+(lk*12).toLocaleString()+' lost per year</div></div>'}
+else if(id==='invoice'){var bz=document.getElementById('i1').value||'Business',cl=document.getElementById('i2').value||'Client',sv=document.getElementById('i3').value||'Service',am=document.getElementById('i4').value||'0',du=document.getElementById('i5').value||'TBD';o.innerHTML='<div class="inv" style="margin-top:10px"><div class="inv-h"><div><div class="inv-biz">'+bz+'</div></div><div class="inv-id"><strong>INV-'+Math.floor(Math.random()*9e3+1e3)+'</strong>'+new Date().toLocaleDateString()+'</div></div><div class="inv-row"><span class="inv-l">Bill To:</span><span class="inv-r">'+cl+'</span></div><div class="inv-row"><span class="inv-l">Service:</span><span class="inv-r">'+sv+'</span></div><div class="inv-row"><span class="inv-l">Due:</span><span class="inv-r">'+du+'</span></div><div class="inv-total"><span>Total:</span><span class="inv-r">$'+parseInt(am).toLocaleString()+'</span></div></div>'}
+else if(id==='captions'){var bt=document.getElementById('i1').value||'Business',tp=document.getElementById('i2').value||'growth',tn=document.getElementById('i3').value||'Professional';var caps=['🔥 '+bt+' owners — stop scrolling. Your '+tp+' strategy is about to change. #'+bt.replace(/\s/g,''),'The secret to '+tp+'? Consistency + the right system. 💪 #Hustle','⚡ "I wish I started sooner" — Every '+bt+' owner after this '+tp+' framework. #Results','POV: Best month ever because you took '+tp+' seriously. 📈 #Winning','Still doing '+tp+' the old way? Top 1% of '+bt+' owners do this ⬇️ #GameChanger'];o.innerHTML=caps.map(function(c,i){return'<div class="oc" style="margin-top:'+(i?0:10)+'px"><div class="oc-l">Caption '+(i+1)+'</div><div class="oc-v">'+c+'</div></div>'}).join('')}
+else if(id==='email-subj'){var pu=document.getElementById('i1').value||'launch',ta=document.getElementById('i2').value||'pros',et=document.getElementById('i3').value||'Curiosity';var L={Curiosity:['The '+pu+' nobody saw coming...','Why '+ta+' are quietly switching','I wasn\'t going to share this...','The hidden truth about '+pu,'Open this or your competitor will','What '+ta+' know that you don\'t','This changes everything about '+pu,'Read this before your next '+pu,'The '+pu+' mistake costing $10K/mo','Are you still doing '+pu+' wrong?'],Fear:['Warning: your '+pu+' is broken',''+ta+' are losing money doing THIS','Stop — this affects your '+pu,'The silent killer in '+ta+'\'s results','Ignore this '+pu+' trend at your risk','Your competitors just found this','The '+pu+' crisis nobody talks about','This $50K mistake is ruining '+ta,'Last warning: '+pu+' deadline','Why '+ta+' are failing in 2025'],Urgency:['⏰ 24hrs left — '+pu+' closing','FINAL: '+pu+' expires tonight','Only 3 spots for '+ta,'This '+pu+' deal dies at midnight','URGENT: '+ta+' must act now','Last chance — '+pu+' window closing','Going going... ('+pu+')','Your spot is being given away','12 hours then '+pu+' disappears','NOW OR NEVER for '+ta],Benefit:['How to 10x your '+pu+' (free)',''+ta+': your unfair advantage','The exact '+pu+' playbook for $50K','More '+pu+' results, zero extra work',''+ta+' save 20hrs/week with this','Your free '+pu+' toolkit is ready','The '+pu+' shortcut for '+ta,'Double '+pu+' results in 7 days','Free: '+pu+' template that converts 40%',''+ta+': unlock your weapon']};var ls=L[et]||L.Curiosity;o.innerHTML=ls.map(function(l,i){return'<div class="oc" style="margin-top:'+(i?0:10)+'px"><div class="oc-l">#'+(i+1)+'</div><div class="oc-v" style="font-weight:700;color:#fff">'+l+'</div></div>'}).join('')}
+else if(id==='sales-script'){var pr=document.getElementById('i1').value||'product',cu=document.getElementById('i2').value||'customers',ob=document.getElementById('i3').value||'price';o.innerHTML='<div class="oc" style="margin-top:10px"><div class="oc-l">🎬 Opening</div><div class="oc-v">"Hi — I know '+cu+' get pitched daily. <strong>If I could show how '+pr+' eliminates your biggest pain in 30 days, worth 3 minutes?</strong>"</div></div><div class="oc"><div class="oc-l">💬 Value</div><div class="oc-v">"Most '+pr+' gives a tool. <strong>We give a system.</strong> Clients see [result] within [timeframe] because [mechanism]..."</div></div><div class="oc"><div class="oc-l">🎯 Handle "'+ob+'"</div><div class="oc-v">"I get it. But <strong>what\'s the cost of NOT fixing this?</strong> Avg client saves/makes [X] in 90 days. The question isn\'t cost — it\'s what you\'re losing."</div></div><div class="oc"><div class="oc-l">🔥 Close</div><div class="oc-v">"Let\'s do a <strong>free 15-min deep dive</strong> — no commitment. If it fits, great. If not, I won\'t chase you."</div></div>'}
+else if(id==='lead-widget'){var wb=document.getElementById('i1').value||'Business',wo=document.getElementById('i2').value||'Get 20% off!',wc=document.getElementById('i3').value||'#6366f1';o.innerHTML='<div class="oc" style="margin-top:10px"><div class="oc-l">Live Preview</div><div style="background:'+wc+'11;border:1px solid '+wc+'33;border-radius:8px;padding:14px;text-align:center;margin-top:5px"><div style="font-size:14px;font-weight:800;margin-bottom:3px">'+wb+'</div><div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:8px">'+wo+'</div><input style="width:100%;padding:7px;border:1px solid '+wc+'44;border-radius:5px;background:rgba(0,0,0,.2);color:#fff;margin-bottom:5px;font-size:11px" placeholder="Email"><button style="width:100%;padding:7px;border:none;border-radius:5px;background:'+wc+';color:#fff;font-weight:700;font-size:11px;cursor:pointer">Get Offer →</button></div></div>'}
+else if(id==='pricing'){var ps=document.getElementById('i1').value||'Service',pc=parseInt(document.getElementById('i2').value)||100,pm=parseInt(document.getElementById('i3').value)||50,pp=parseInt(document.getElementById('i4').value)||300;var b=Math.round(pc*(1+pm/100)),m=Math.round(b*1.8),h2=Math.round(b*3.2);o.innerHTML='<div style="margin-top:10px"><div class="tier"><div class="tier-nm">Basic</div><div class="tier-pr">$'+b+'/mo</div><div class="tier-ds">Essential '+ps+'. Core features.</div></div><div class="tier feat"><div class="tier-nm">⭐ Premium</div><div class="tier-pr">$'+m+'/mo</div><div class="tier-ds">Full '+ps+' + priority support.</div></div><div class="tier"><div class="tier-nm">Elite</div><div class="tier-pr">$'+h2+'/mo</div><div class="tier-ds">Everything + dedicated manager.</div></div></div>'}
+else if(id==='roi'){var sp=parseInt(document.getElementById('i1').value)||1,rv=parseInt(document.getElementById('i2').value)||0,dy=parseInt(document.getElementById('i3').value)||30;var roi=Math.round(((rv-sp)/sp)*100),pf=rv-sp;o.innerHTML='<div class="oc" style="text-align:center;margin-top:10px"><div class="oc-l">📊 ROI</div><div class="out-big'+(pf>=0?' green':'')+'">'+roi+'%</div><div style="font-size:13px;color:'+(pf>=0?'var(--neon)':'var(--acc)')+';font-weight:800">'+(pf>=0?'Profit':'Loss')+': $'+Math.abs(pf).toLocaleString()+'</div><div style="font-size:10px;color:rgba(255,255,255,.3)">Over '+dy+' days</div></div>'}
+else if(id==='retention'){var tt=parseInt(document.getElementById('i1').value)||1,lo=parseInt(document.getElementById('i2').value)||0,lf=parseInt(document.getElementById('i3').value)||1;var rt=Math.round(((tt-lo)/tt)*100);var cl=rt>=85?'green':rt>=70?'yellow':'red';var tip=rt>=85?'Excellent. Focus on upsells.':rt>=70?'Good. Add monthly check-ins + loyalty program.':'Critical! Deploy re-engagement campaign now.';o.innerHTML='<div style="text-align:center;margin-top:10px"><div class="score '+cl+'">'+rt+'</div><div style="font-size:13px;font-weight:800;margin-bottom:3px">Score: '+rt+'/100</div><div class="oc"><div class="oc-l">💡 Action</div><div class="oc-v">'+tip+'</div></div></div>'}
+else if(id==='competitor'){var mb=document.getElementById('i1').value||'Business',mc=document.getElementById('i2').value||'City',cp=document.getElementById('i3').value||'Competitor';var items=['🎯 Position|'+cp+' uses brand awareness. Counter with <strong>measurable results</strong>.','💰 Pricing|Position as <strong>premium quality at fair prices</strong> vs '+cp+'.','📱 Digital|<strong>Post daily for 90 days</strong> to dominate '+mc+' feeds.','⭐ Reviews|Launch <strong>Review Blitz</strong> — email top 20 clients for Google reviews this week.','🔥 Moat|Create a <strong>proprietary framework</strong> '+cp+' cannot copy.'];o.innerHTML=items.map(function(x,i){var p=x.split('|');return'<div class="oc" style="margin-top:'+(i?0:10)+'px"><div class="oc-l">'+p[0]+'</div><div class="oc-v">'+p[1]+'</div></div>'}).join('')}
+}
+
+/* PAYMENT */
+function showPay(toolId,isBundle){
+var t=TOOLS.find(function(x){return x.id===toolId});
+var tNm=isBundle?'All 10 Tools Bundle':t?t.nm:toolId;
+var pr=isBundle?100:15;
+var payId=isBundle?'all-tools':toolId;
+var choice=null;
+
+document.getElementById('pM').innerHTML='<button class="pm-x" id="pmX">✕</button>'+
+'<div style="text-align:center;animation:slideUp .4s ease">'+
+'<div style="font-size:32px;margin-bottom:6px">'+(isBundle?'🎁':t?t.ic:'🔓')+'</div>'+
+'<div style="font-size:16px;font-weight:900;margin-bottom:2px">TRIAL ENDED</div>'+
+'<div style="font-size:11px;color:rgba(255,255,255,.35);margin-bottom:12px">Unlock <strong style="color:#fff">'+tNm+'</strong> for lifetime</div>'+
+'<div style="font-size:38px;font-weight:900;color:var(--neon);margin-bottom:10px">$'+pr+'</div>'+
+'<div style="font-size:10px;color:rgba(255,255,255,.25);margin-bottom:12px">USDT · Polygon · Trust Wallet</div>'+
+'<div class="tw"><div class="tw-l">Send $'+pr+' Tether USDT (Polygon) to:</div>'+
+'<div class="tw-a" id="pAddr">'+WALLET+'</div>'+
+'<div class="tw-n">Network: Polygon · Token: Tether USDT</div>'+
+'<button class="tw-cp" id="pCp">Copy</button></div>'+
+'<div style="margin-top:12px;text-align:left">'+
+'<div style="font-size:12px;font-weight:700;text-align:center;margin-bottom:8px">Completed the payment?</div>'+
+'<div class="pc-opts"><div class="pc-opt" id="pY"><div class="poi">✅</div><div class="pot">Yes</div></div>'+
+'<div class="pc-opt" id="pN"><div class="poi">❌</div><div class="pot">No</div></div></div>'+
+'<div id="pFields" style="display:none"><label>Name</label><input class="inp" id="pNm" placeholder="John Smith" style="-webkit-user-select:text;user-select:text"><label>Email</label><input class="inp" id="pEm" type="email" placeholder="john@email.com" style="-webkit-user-select:text;user-select:text"><label>Transaction Hash</label><input class="inp" id="pHash" placeholder="0x..." style="-webkit-user-select:text;user-select:text"><div class="err" id="pErr"></div></div>'+
+'<div id="pMsg"></div>'+
+'<button class="btn" id="pSub" disabled style="margin-top:6px">Select above</button>'+
+'</div></div>';
+
+document.getElementById('payOv').classList.add('open');
+document.getElementById('pmX').addEventListener('click',function(){document.getElementById('payOv').classList.remove('open');renderGrid()});
+document.getElementById('pCp').addEventListener('click',function(){var b=this;navigator.clipboard.writeText(WALLET).then(function(){b.textContent='Copied!';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},2000)}).catch(function(){})});
+
+document.getElementById('pY').addEventListener('click',function(){choice='yes';this.classList.add('sy');document.getElementById('pN').classList.remove('sn');document.getElementById('pFields').style.display='block';document.getElementById('pMsg').innerHTML='';var b=document.getElementById('pSub');b.removeAttribute('disabled');b.textContent='✅ Submit';b.className='btn btn-g'});
+document.getElementById('pN').addEventListener('click',function(){choice='no';this.classList.add('sn');document.getElementById('pY').classList.remove('sy');document.getElementById('pFields').style.display='none';document.getElementById('pMsg').innerHTML='<div class="no-msg">☝️ Send <strong>$'+pr+' USDT</strong> first.</div>';var b=document.getElementById('pSub');b.removeAttribute('disabled');b.textContent='❌ Not Yet';b.className='btn btn-r'});
+
+document.getElementById('pSub').addEventListener('click',function(){
+if(!choice)return;
+if(choice==='no'){document.getElementById('pMsg').innerHTML='<div class="no-msg">💳 Pay first, then select <strong>"Yes"</strong>.</div>';return}
+var nm=document.getElementById('pNm').value.trim(),em=document.getElementById('pEm').value.trim(),hsh=document.getElementById('pHash').value.trim();
+var er=document.getElementById('pErr');er.classList.remove('on');
+if(!nm||!em||!hsh){er.textContent='Fill all fields';er.classList.add('on');return}
+var b=this;b.classList.add('ld');b.textContent='Submitting';
+w3f({subject:'💰 PAYMENT — '+tNm+' — $'+pr+' — CHECK TRUST WALLET',name:nm,email:em,tool:tNm,amount:'$'+pr+' USDT Polygon',tx_hash:hsh,wallet:WALLET,timestamp:new Date().toISOString(),message:nm+' claims $'+pr+' for '+tNm+'. TX: '+hsh+'. Check wallet → Admin → Grant/Deny.'},
+function(){setPend(payId,{ts:Date.now(),name:nm,email:em,tool:tNm,hash:hsh,amount:pr});showVerify(payId)},
+function(){setPend(payId,{ts:Date.now(),name:nm,email:em,tool:tNm,hash:hsh,amount:pr});showVerify(payId)})});}
+
+function showVerify(payId){
+document.getElementById('payOv').classList.remove('open');
+var ov=document.getElementById('toolOv');ov.classList.add('open');
+document.getElementById('tC').innerHTML='<div class="tm"><button class="tm-x" id="tmX2">✕</button>'+
+'<div class="bv" id="bvC"><div class="bv-blocks"><div class="bv-b"></div><div class="bv-ln"></div><div class="bv-b"></div><div class="bv-ln"></div><div class="bv-b"></div><div class="bv-ln"></div><div class="bv-b"></div><div class="bv-ln"></div><div class="bv-b"></div></div>'+
+'<div class="bv-scan"><div></div></div>'+
+'<div class="bv-t">VERIFYING ON POLYGON NETWORK...</div>'+
+'<div class="bv-s">Our team is checking. Usually 5–15 minutes.</div>'+
+'<div class="bv-st"><span class="bv-dot"></span> Pending</div>'+
+'<div style="font-size:9.5px;color:rgba(255,255,255,.18);margin-top:10px">💡 Auto-unlocks when verified. Close & return anytime.</div></div></div>';
+document.getElementById('tmX2').addEventListener('click',function(){ov.classList.remove('open');renderGrid()});
+var pi=setInterval(function(){
+if(has(payId)||(payId==='all-tools'&&hasAll())){
+clearInterval(pi);
+var bv=document.getElementById('bvC');
+if(bv)bv.innerHTML='<div style="animation:fadeUp .4s ease"><div class="ok-ic" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:#fff;animation:pop .5s ease">🎉</div><div style="font-size:16px;font-weight:900;margin-bottom:3px">ACCESS GRANTED</div><div style="font-size:12px;color:rgba(255,255,255,.4)">Welcome to lifetime access!</div></div>';
+setTimeout(function(){ov.classList.remove('open');renderGrid()},2500)}},4000);}
+
+document.getElementById('bundleBtn').addEventListener('click',function(){showPay('all-tools',true)});
+renderGrid();
+</script>
+</body>
+</html>
